@@ -15,4 +15,6 @@ pypy3 main.py > test1.ppm
 
 Output files are portable pixmap format (PPM) files. See here https://en.wikipedia.org/wiki/Netpbm
 
+## Dependencies
 
+None
