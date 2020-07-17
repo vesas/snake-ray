@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-import vector as v
-import util as u
+import vector
+import util
 import math
 
 class Material(ABC):
@@ -19,8 +19,8 @@ class Lambertian(Material):
         self.albedo = albedo
         
     def scatter(self,r_in,hit_rec):
-        scatter_direction = hit_rec.normal + v.random_unit_vector()
-        scattered = v.ray(hit_rec.p, scatter_direction)
+        scatter_direction = hit_rec.normal + vector.random_unit_vector()
+        scattered = vector.Ray(hit_rec.position, scatter_direction)
         return True, self.albedo, scattered
 
 
@@ -33,10 +33,10 @@ class Metal(Material):
     def scatter(self,r_in,hit_rec):
 
 
-        reflected = v.reflect(v.unit_vector(r_in.direction), hit_rec.normal)
-        scattered = v.ray(hit_rec.p,reflected + v.random_in_unit_sphere().times( self.fuzz ))
+        reflected = vector.reflect(vector.unit_vector(r_in.direction), hit_rec.normal)
+        scattered = vector.Ray(hit_rec.position,reflected + vector.random_in_unit_sphere().times( self.fuzz ))
 
-        didscatter = (v.dot(scattered.direction, hit_rec.normal) > 0)
+        didscatter = (vector.dot(scattered.direction, hit_rec.normal) > 0)
         
         return didscatter, self.color,scattered
 
@@ -46,28 +46,28 @@ class Dielectric(Material):
         self.ref_idx = refractive_index
 
     def scatter(self,r_in,hit_rec):
-        attenuation = v.vec3(1.0, 1.0, 1.0)
+        attenuation = vector.Vec3(1.0, 1.0, 1.0)
         etai_over_etat = self.ref_idx
 
-        if hit_rec.front_face == True:
+        if hit_rec.front_face:
             etai_over_etat = 1.0 / self.ref_idx
 
-        unit_direction = v.unit_vector(r_in.direction)
+        unit_direction = vector.unit_vector(r_in.direction)
         
-        cos_theta = min(v.dot(-unit_direction,hit_rec.normal),1.0)
+        cos_theta = min(vector.dot(-unit_direction,hit_rec.normal),1.0)
         sin_theta = math.sqrt(1.0 - cos_theta*cos_theta)
 
         if etai_over_etat * sin_theta > 1.0:
-            reflected = v.reflect(unit_direction, hit_rec.normal)
-            scattered = v.ray(hit_rec.p, reflected)
+            reflected = vector.reflect(unit_direction, hit_rec.normal)
+            scattered = vector.Ray(hit_rec.position, reflected)
             return True, attenuation, scattered
 
-        reflect_prob = v.schlick(cos_theta, etai_over_etat)
-        if u.random_double() < reflect_prob:
-            reflected = v.reflect(unit_direction, hit_rec.normal)
-            scattered = v.ray(hit_rec.p, reflected)
+        reflect_prob = vector.schlick(cos_theta, etai_over_etat)
+        if util.random_double() < reflect_prob:
+            reflected = vector.reflect(unit_direction, hit_rec.normal)
+            scattered = vector.Ray(hit_rec.position, reflected)
             return True, attenuation, scattered
 
-        refracted = v.refract(unit_direction, hit_rec.normal, etai_over_etat)
-        scattered = v.ray(hit_rec.p, refracted)
+        refracted = vector.refract(unit_direction, hit_rec.normal, etai_over_etat)
+        scattered = vector.Ray(hit_rec.position, refracted)
         return True, attenuation, scattered
