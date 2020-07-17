@@ -13,11 +13,11 @@ def degrees_to_radians(degrees):
 def random_double():
     return random.random()
 
-def random_double_range(min, max):
+def random_double_range(min: float, max: float):
     return random.uniform(min, max)
 
 
-def clamp(x, min_value, max_value):
+def clamp(x: float, min_value: float, max_value: float):
 
     if x < min_value:
         return min_value

@@ -5,7 +5,7 @@ import util
 
 class Camera:
 
-    def __init__(self, lookfrom, lookat, vup, vfov, aspect_ratio, aperture, focus_dist):
+    def __init__(self, lookfrom: vector.Vec3, lookat: vector.Vec3, vup: vector.Vec3, vfov: float, aspect_ratio: float, aperture: float, focus_dist: float):
 
         self.origin = lookfrom
         self.lens_radius = aperture / 2
@@ -28,7 +28,7 @@ class Camera:
         self.aspect_ratio = aspect_ratio
 
 
-    def get_ray(self, s, t):
+    def get_ray(self, s: float, t: float):
 
         rd = vector.random_in_unit_disk().times(self.lens_radius)
         offset = self.u1.times(rd.x) + self.v1.times(rd.y)

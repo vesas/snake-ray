@@ -30,21 +30,21 @@ class Vec3:
         return Vec3(-self.x, -self.y, -self.z)
 
 
-    def divide(self, t):
+    def divide(self, t: float):
         ret = Vec3(self.x, self.y, self.z)
         ret.x = self.x / t
         ret.y = self.y / t
         ret.z = self.z / t
         return ret
 
-    def times(self, t):
+    def times(self, t: float):
         ret = Vec3(self.x, self.y, self.z)
         ret.x = self.x * t
         ret.y = self.y * t
         ret.z = self.z * t
         return ret
 
-    def subtract(self, t):
+    def subtract(self, t: float):
         ret = Vec3(self.x, self.y, self.z)
         ret.x = self.x - t
         ret.y = self.y - t
@@ -65,7 +65,7 @@ class Vec3:
 def random():
     return Vec3(util.random_double(), util.random_double(), util.random_double())
 
-def random_in_range(min_value, max_value):
+def random_in_range(min_value: float, max_value: float):
     return Vec3(util.random_double_range(min_value, max_value), 
                 util.random_double_range(min_value, max_value), 
                 util.random_double_range(min_value, max_value))
@@ -80,7 +80,7 @@ def random_in_unit_sphere():
 
         return p
 
-def random_in_hemisphere(normal):
+def random_in_hemisphere(normal: Vec3):
     in_unit_sphere = random_in_unit_sphere()
     if dot(in_unit_sphere, normal) > 0.0: # In the same hemisphere as the normal
         return in_unit_sphere
@@ -114,12 +114,12 @@ def cross(u_vector: Vec3, v_vector: Vec3):
 def reflect(v_vector: Vec3, n_vector: Vec3):
     return v_vector - n_vector.times(dot(v_vector, n_vector)*2.0)
 
-def schlick(cosine, ref_idx:float):
+def schlick(cosine: float, ref_idx: float):
     r0 = (1-ref_idx) / (1+ref_idx)
     r0 = r0 * r0
     return r0 + (1-r0) * math.pow((1- cosine),5)
 
-def refract(uv_vector: Vec3, n_vector: Vec3, etai_over_etat):
+def refract(uv_vector: Vec3, n_vector: Vec3, etai_over_etat: float):
     cos_theta = dot(-uv_vector, n_vector)
     r_out_parallel = (uv_vector + n_vector.times(cos_theta)).times(etai_over_etat)
     r_out_perp = n_vector.times( -math.sqrt(1.0 - r_out_parallel.length_squared()))

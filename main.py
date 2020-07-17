@@ -14,10 +14,10 @@ def random_scene(seed):
 
     world = hittable.HittableList()
 
-    world.add(hittable.Sphere(vector.Vec3(0,-1000,0),1000,material.Lambertian(vector.Vec3(0.5, 0.5, 0.5))))
+    world.add(hittable.Sphere(vector.Vec3(0, -1000, 0), 1000,material.Lambertian(vector.Vec3(0.5, 0.5, 0.5))))
 
-    for a in range(-11, 11,1):
-        for b in range(-11, 11,1):
+    for a in range(-11, 11, 1):
+        for b in range(-11, 11, 1):
             choose_mat = util.random_double()
 
             center = vector.Vec3(a + 0.9*util.random_double(), 0.2, b + 0.9*util.random_double())
@@ -26,23 +26,23 @@ def random_scene(seed):
                 if choose_mat < 0.8:
                     # diffuse
                     albedo = vector.random() * vector.random()
-                    world.add(hittable.Sphere(center,0.2,material.Lambertian(albedo)))
+                    world.add(hittable.Sphere(center, 0.2, material.Lambertian(albedo)))
 
-                elif (choose_mat < 0.95):
+                elif choose_mat < 0.95:
                     # metal
                     albedo = vector.random_in_range(.5, 1)
                     fuzz = util.random_double_range(0, .5)
 
-                    world.add(hittable.Sphere(center,0.2,material.Metal(albedo,fuzz)))
+                    world.add(hittable.Sphere(center, 0.2, material.Metal(albedo,fuzz)))
                 else:
                     # glass
-                    world.add(hittable.Sphere(center,0.2,material.Dielectric(1.5)))
+                    world.add(hittable.Sphere(center, 0.2, material.Dielectric(1.5)))
 
-    world.add(hittable.Sphere(vector.Vec3(0, 1, 0),1.0,material.Dielectric(1.5)))
+    world.add(hittable.Sphere(vector.Vec3(0, 1, 0), 1.0, material.Dielectric(1.5)))
 
-    world.add(hittable.Sphere(vector.Vec3(-4, 1, 0),1.0,material.Lambertian(vector.Vec3(.4, .2, .1))))
+    world.add(hittable.Sphere(vector.Vec3(-4, 1, 0), 1.0, material.Lambertian(vector.Vec3(.4, .2, .1))))
 
-    world.add(hittable.Sphere(vector.Vec3(4, 1, 0),1.0,material.Metal(vector.Vec3(.7, .6, .5),0.0)))
+    world.add(hittable.Sphere(vector.Vec3(4, 1, 0), 1.0, material.Metal(vector.Vec3(.7, .6, .5), 0.0)))
     
     return world
 
@@ -50,7 +50,7 @@ def random_scene(seed):
 Writes pixel color to the output file
 
 '''
-def write_color(pixel_color: vector.Vec3, samples_per_pixel):
+def write_color(pixel_color: vector.Vec3, samples_per_pixel: int):
 
     r = pixel_color.x
     g = pixel_color.y
@@ -62,28 +62,28 @@ def write_color(pixel_color: vector.Vec3, samples_per_pixel):
     g = math.sqrt(g * scale)
     b = math.sqrt(b * scale)
 
-    print("" + str(int(256 * util.clamp(r,0.0,0.999))) + " " + str(int(256 * util.clamp(g,0.0,0.999))) + " " + str(int(256 * util.clamp(b,0.0,0.999))))
+    print("" + str(int(256 * util.clamp(r, 0.0, 0.999))) + " " + str(int(256 * util.clamp(g, 0.0, 0.999))) + " " + str(int(256 * util.clamp(b, 0.0, 0.999))))
 
-def ray_color(r: vector.Ray, world: hittable.hittable, depth):
+def ray_color(ray: vector.Ray, world: hittable.Hittable, depth):
 
     if depth <= 0:
-        return vector.Vec3(0.0,0.0,0.0)
+        return vector.Vec3(0.0, 0.0, 0.0)
 
-    did_hit, hit_rec = world.hit(r,0.001,util.INFINITY)
+    did_hit, hit_rec = world.hit(ray, 0.001, util.INFINITY)
 
     if did_hit:
 
         tempmaterial = hit_rec.material
 
-        didscatter, albedo, scattered = tempmaterial.scatter(r,hit_rec)
+        didscatter, albedo, scattered = tempmaterial.scatter(ray, hit_rec)
 
         if didscatter:
 
-            return albedo * ray_color(scattered,world,depth-1)
+            return albedo * ray_color(scattered, world,depth-1)
 
-        return vector.Vec3(0,0,0)
+        return vector.Vec3(0, 0, 0)
 
-    unit_dir = vector.unit_vector(r.direction)
+    unit_dir = vector.unit_vector(ray.direction)
     t = (unit_dir.y + 1.0)*0.5
     return vector.Vec3(1.0, 1.0, 1.0).times(1.0-t) + vector.Vec3(0.5, 0.7, 1.0).times(t)
     
@@ -120,12 +120,12 @@ image_height = int(image_width / aspect_ratio)
 samples_per_pixel = 10
 max_depth = 50
 
-lookfrom = vector.Vec3(13,2,3)
-lookat = vector.Vec3(0,0,0)
+lookfrom = vector.Vec3(13, 2, 3)
+lookat = vector.Vec3(0, 0, 0)
 dist_to_focus = 10.0
 aperture = 0.1
 
-vup = vector.Vec3(0,1,0)
+vup = vector.Vec3(0, 1, 0)
 
 
 
@@ -158,14 +158,14 @@ print("P3")
 print("" + str(image_width) + " " + str(image_height))
 print("255")
 
-for j in range(image_height-1,0,-1):
+for j in range(image_height-1, 0, -1):
 
     if instancevar == -1:
         sys.stderr.write("\rScanlines remaining: " + str(j) + "     ")
 
-    for i in range(0,image_width,1):
+    for i in range(0, image_width, 1):
 
-        pixel_color = vector.Vec3(0.0,0.0,0.0)
+        pixel_color = vector.Vec3(0.0, 0.0, 0.0)
 
         for s in range(samples_per_pixel):
 
@@ -174,10 +174,10 @@ for j in range(image_height-1,0,-1):
 
             r = cam.get_ray(u1,v1)
 
-            pixel_color = pixel_color + ray_color(r,world,max_depth)
+            pixel_color = pixel_color + ray_color(r, world, max_depth)
 
         
-        write_color(pixel_color,samples_per_pixel)
+        write_color(pixel_color, samples_per_pixel)
 
 
 sys.stderr.write("\nDone " + str(instancevar) )
