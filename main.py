@@ -81,7 +81,7 @@ def write_color(pixel_color: vector.Vec3, samples_per_pixel: int):
     g = math.sqrt(g * scale)
     b = math.sqrt(b * scale)
 
-    print("" + str(int(256 * util.clamp(r, 0.0, 0.999))) + " " + str(int(256 * util.clamp(g, 0.0, 0.999))) + " " + str(int(256 * util.clamp(b, 0.0, 0.999))))
+    print("" + str(int(255.999 * util.clamp(r, 0.0, 0.999))) + " " + str(int(255.999 * util.clamp(g, 0.0, 0.999))) + " " + str(int(255.999 * util.clamp(b, 0.0, 0.999))))
 
 def ray_color(ray: vector.Ray, world: hittable.Hittable, depth):
 
@@ -138,11 +138,12 @@ def main():
 
     random.seed(instancevar)
 
+    sys.stdout = open(sys.stdout.fileno(), mode='w', encoding='ascii', buffering=1)
     print("P3")
     print("" + str(image_width) + " " + str(image_height))
     print("255")
 
-    for j in range(image_height-1, 0, -1):
+    for j in range(image_height-1, -1, -1):
 
         if instancevar == -1:
             sys.stderr.write("\rScanlines remaining: " + str(j) + "     ")
