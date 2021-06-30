@@ -69,7 +69,7 @@ def test_scene(seed):
 Writes pixel color to the output file
 
 '''
-def write_color(pixel_color: vector.Vec3, samples_per_pixel: int):
+def write_color(outfile, pixel_color: vector.Vec3, samples_per_pixel: int):
 
     r = pixel_color.x
     g = pixel_color.y
@@ -81,7 +81,8 @@ def write_color(pixel_color: vector.Vec3, samples_per_pixel: int):
     g = math.sqrt(g * scale)
     b = math.sqrt(b * scale)
 
-    print("" + str(int(255.999 * util.clamp(r, 0.0, 0.999))) + " " + str(int(255.999 * util.clamp(g, 0.0, 0.999))) + " " + str(int(255.999 * util.clamp(b, 0.0, 0.999))))
+    outfile.write("" + str(int(255.999 * util.clamp(r, 0.0, 0.999))) + " " + str(int(255.999 * util.clamp(g, 0.0, 0.999))) + " " + str(int(255.999 * util.clamp(b, 0.0, 0.999))))
+    outfile.write("\n")
 
 def ray_color(ray: vector.Ray, world: hittable.Hittable, depth):
 
@@ -113,10 +114,19 @@ def main():
 
     instancevar = -1
 
-    if arglen > 1:
+    if arglen <= 1:
+        print("usage: python main.py <output filename> <instanceid>")
+        sys.exit()
+
+    arg1 = sys.argv[1]
+
+    filename = arg1
+
+    if arglen > 2:
         arg0 = sys.argv[0]
         arg1 = sys.argv[1]
-        instancevar = arg1
+        arg2 = sys.argv[2]
+        instancevar = arg2
 
     aspect_ratio = 16.0 / 9.0
     image_width = 384
@@ -138,12 +148,15 @@ def main():
 
     random.seed(instancevar)
 
-    sys.stdout = open(sys.stdout.fileno(), mode='w', encoding='ascii', buffering=1)
-    print("P3")
-    print("" + str(image_width) + " " + str(image_height))
-    print("255")
+    outfile = open(filename, mode='w', encoding='utf-8', buffering=1)
 
+    outfile.write("P3\n")
+    outfile.write("" + str(image_width) + " " + str(image_height) + "\n")
+    outfile.write("255\n")
+    
     for j in range(image_height-1, -1, -1):
+
+        #print(sys.stdout.encoding,file=sys.stderr)
 
         if instancevar == -1:
             sys.stderr.write("\rScanlines remaining: " + str(j) + "     ")
@@ -162,8 +175,11 @@ def main():
                 pixel_color = pixel_color + ray_color(r, world, max_depth)
 
             
-            write_color(pixel_color, samples_per_pixel)
+            write_color(outfile,pixel_color, samples_per_pixel)
 
+
+    outfile.flush()
+    outfile.close()
 
     sys.stderr.write("\nDone (instance: " + str(instancevar) + ")")
         

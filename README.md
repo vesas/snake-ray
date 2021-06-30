@@ -10,7 +10,7 @@ Result image from running 8 instances and averaging the output.
 
 ## Running
 
-pypy3 main.py > test1.ppm
+python main.py out.ppm
 
 ## Output files
 
