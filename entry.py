@@ -108,31 +108,13 @@ def ray_color(ray: vector.Ray, world: hittable.Hittable, depth):
     return vector.Vec3(1.0, 1.0, 1.0).times(1.0-t) + vector.Vec3(0.5, 0.7, 1.0).times(t)
 
 
-def main():
+def entry(filename, instanceid):
     
-    arglen = len(sys.argv)
-
-    instancevar = -1
-
-    if arglen <= 1:
-        print("usage: python main.py <output filename> <instanceid>")
-        sys.exit()
-
-    arg1 = sys.argv[1]
-
-    filename = arg1
-
-    if arglen > 2:
-        arg0 = sys.argv[0]
-        arg1 = sys.argv[1]
-        arg2 = sys.argv[2]
-        instancevar = arg2
-
     aspect_ratio = 16.0 / 9.0
-    image_width = 384
-    #image_width = 800
+    # image_width = 384
+    image_width = 800
     image_height = int(image_width / aspect_ratio)
-    samples_per_pixel = 10
+    samples_per_pixel = 32
     max_depth = 50
 
     lookfrom = vector.Vec3(13, 2, 3)
@@ -146,7 +128,7 @@ def main():
 
     world = random_scene(-1)
 
-    random.seed(instancevar)
+    random.seed(instanceid)
 
     outfile = open(filename, mode='w', encoding='utf-8', buffering=1)
 
@@ -158,7 +140,7 @@ def main():
 
         #print(sys.stdout.encoding,file=sys.stderr)
 
-        if instancevar == -1:
+        if instanceid == 0:
             sys.stderr.write("\rScanlines remaining: " + str(j) + "     ")
 
         for i in range(0, image_width, 1):
@@ -181,9 +163,10 @@ def main():
     outfile.flush()
     outfile.close()
 
-    sys.stderr.write("\nDone (instance: " + str(instancevar) + ")")
+    sys.stderr.write("\nDone (instance: " + str(instanceid) + ")")
         
 
 if __name__ == "__main__":
     # execute only if run as a script
-    main()
+
+    entry()
