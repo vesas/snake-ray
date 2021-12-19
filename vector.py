@@ -127,13 +127,14 @@ def refract(uv_vector: Vec3, n_vector: Vec3, etai_over_etat: float):
 
 class Ray:
 
-    def __init__(self, origin=None, direction=None):
+    def __init__(self, origin=None, direction=None, time=0.0):
 
         self.origin = origin
         self.direction = direction
+        self.time = time
 
     def at(self, t):
         return self.origin + (self.direction.times(t))
 
     def __str__(self):
-        return "ray(origin=" + str(self.origin) + ",direction=" + str(self.direction) + ")"
+        return "ray(origin={} ,direction={})".format(self.origin, self.direction)

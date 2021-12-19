@@ -18,7 +18,7 @@ class Lambertian(Material):
 
     def scatter(self, ray_in: vector.Ray, hit_record: hittable.HitRecord):
         scatter_direction = hit_record.normal + vector.random_unit_vector()
-        scattered = vector.Ray(hit_record.position, scatter_direction)
+        scattered = vector.Ray(hit_record.position, scatter_direction, ray_in.time)
         return True, self.albedo, scattered
 
 
@@ -32,7 +32,7 @@ class Metal(Material):
 
 
         reflected = vector.reflect(vector.unit_vector(ray_in.direction), hit_record.normal)
-        scattered = vector.Ray(hit_record.position, reflected + vector.random_in_unit_sphere().times(self.fuzz))
+        scattered = vector.Ray(hit_record.position, reflected + vector.random_in_unit_sphere().times(self.fuzz), ray_in.time)
 
         didscatter = (vector.dot(scattered.direction, hit_record.normal) > 0)
 
@@ -57,15 +57,15 @@ class Dielectric(Material):
 
         if etai_over_etat * sin_theta > 1.0:
             reflected = vector.reflect(unit_direction, hit_record.normal)
-            scattered = vector.Ray(hit_record.position, reflected)
+            scattered = vector.Ray(hit_record.position, reflected, ray_in.time)
             return True, attenuation, scattered
 
         reflect_prob = vector.schlick(cos_theta, etai_over_etat)
         if util.random_double() < reflect_prob:
             reflected = vector.reflect(unit_direction, hit_record.normal)
-            scattered = vector.Ray(hit_record.position, reflected)
+            scattered = vector.Ray(hit_record.position, reflected, ray_in.time)
             return True, attenuation, scattered
 
         refracted = vector.refract(unit_direction, hit_record.normal, etai_over_etat)
-        scattered = vector.Ray(hit_record.position, refracted)
+        scattered = vector.Ray(hit_record.position, refracted, ray_in.time)
         return True, attenuation, scattered

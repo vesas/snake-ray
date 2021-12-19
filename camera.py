@@ -5,7 +5,7 @@ import util
 
 class Camera:
 
-    def __init__(self, lookfrom: vector.Vec3, lookat: vector.Vec3, vup: vector.Vec3, vfov: float, aspect_ratio: float, aperture: float, focus_dist: float):
+    def __init__(self, lookfrom: vector.Vec3, lookat: vector.Vec3, vup: vector.Vec3, vfov: float, aspect_ratio: float, aperture: float, focus_dist: float, time0: float, time1: float):
 
         self.origin = lookfrom
         self.lens_radius = aperture / 2
@@ -27,11 +27,17 @@ class Camera:
         self.vfov = vfov
         self.aspect_ratio = aspect_ratio
 
+        # camera shutter open/close times
+        self.time0 = time0
+        self.time1 = time1
+
 
     def get_ray(self, s: float, t: float):
 
         rd = vector.random_in_unit_disk().times(self.lens_radius)
         offset = self.u1.times(rd.x) + self.v1.times(rd.y)
 
-        ret = vector.Ray(self.origin + offset, self.lower_left_corner + self.horizontal.times(s) + self.vertical.times(t) - self.origin - offset)
+        ret = vector.Ray(self.origin + offset,
+                    self.lower_left_corner + self.horizontal.times(s) + self.vertical.times(t) - self.origin - offset,
+                    util.random_double_range(self.time0, self.time1))
         return ret

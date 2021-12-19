@@ -16,6 +16,7 @@ def random_scene(seed):
 
     world.add(hittable.Sphere(vector.Vec3(0, -1000, 0), 1000, material.Lambertian(vector.Vec3(0.5, 0.5, 0.5))))
 
+    hitList = []
     for a in range(-11, 11):
         for b in range(-11, 11):
             choose_mat = util.random_double()
@@ -26,18 +27,22 @@ def random_scene(seed):
                 if choose_mat < 0.8:
                     # diffuse
                     albedo = vector.random() * vector.random()
-                    world.add(hittable.Sphere(center, 0.2, material.Lambertian(albedo)))
+                    # world.add(hittable.Sphere(center, 0.2, material.Lambertian(albedo)))
+
+                    center2 = center + vector.Vec3(0, util.random_double_range(0,.5), 0)
+                    hitList.append(hittable.MovingSphere(center, center2, 0.0, 1.0, 0.2, material.Lambertian(albedo)))
 
                 elif choose_mat < 0.95:
                     # metal
                     albedo = vector.random_in_range(.5, 1)
                     fuzz = util.random_double_range(0, .5)
 
-                    world.add(hittable.Sphere(center, 0.2, material.Metal(albedo, fuzz)))
+                    hitList.append(hittable.Sphere(center, 0.2, material.Metal(albedo, fuzz)))
                 else:
                     # glass
-                    world.add(hittable.Sphere(center, 0.2, material.Dielectric(1.5)))
+                    hitList.append(hittable.Sphere(center, 0.2, material.Dielectric(1.5)))
 
+    world.add(hittable.bvh_node(hitList, 0,1, 0, 1))
     world.add(hittable.Sphere(vector.Vec3(0, 1, 0), 1.0, material.Dielectric(1.5)))
 
     world.add(hittable.Sphere(vector.Vec3(-4, 1, 0), 1.0, material.Lambertian(vector.Vec3(.4, .2, .1))))
@@ -54,16 +59,53 @@ def test_scene(seed):
 
     R = math.cos(util.PI/4)
 
-    world.add(hittable.Sphere(vector.Vec3(-R, 0, -1), R, material.Lambertian(vector.Vec3(0, 0, 1))))
-    world.add(hittable.Sphere(vector.Vec3(R, 0, -1), R, material.Lambertian(vector.Vec3(1, 0, 0))))
+    hit_list = []
 
-    world.add(hittable.Sphere(vector.Vec3(0, 0, -1), 0.5, material.Lambertian(vector.Vec3(0.1, 0.2, 0.5))))
-    world.add(hittable.Sphere(vector.Vec3(0, -100.5, -1), 100, material.Lambertian(vector.Vec3(0.8, 0.8, 0.0))))
+    world.add(hittable.Sphere(vector.Vec3(0, -1000, 0), 1000, material.Lambertian(vector.Vec3(0.6, 0.6, 0.6))))
 
-    world.add(hittable.Sphere(vector.Vec3(1, 0, -1), 0.5, material.Metal(vector.Vec3(.8, .6, .2), 0.0)))
-    world.add(hittable.Sphere(vector.Vec3(-1, 0, -1), 0.5, material.Dielectric(1.5)))
-    world.add(hittable.Sphere(vector.Vec3(-1, 0, -1), -0.45, material.Dielectric(1.5)))
-  
+    for _ in range(200):
+        ranx = util.random_double_range(-10,10)
+        ranz = util.random_double_range(-10,10)
+
+        sp1 = hittable.Sphere(vector.Vec3(ranx, 0.3, ranz), 0.3,  material.Lambertian(vector.Vec3(.4, .2, .1)))
+        hit_list.append(sp1)
+    
+    # world.add(hittable.Sphere(vector.Vec3(1, 0, -1), 0.5, material.Metal(vector.Vec3(.8, .6, .2), 0.0)))
+    # 
+
+    bvh = hittable.bvh_node(hit_list,0,1)
+    world.add(bvh)
+
+    return world
+
+def test_scene2(seed):
+
+    random.seed(seed)
+
+    world = hittable.HittableList()
+
+    R = math.cos(util.PI/4)
+
+    hit_list = []
+
+    world.add(hittable.Sphere(vector.Vec3(0, -1000, 0), 1000, material.Lambertian(vector.Vec3(0.6, 0.6, 0.6))))
+    
+    sp1 = hittable.Sphere(vector.Vec3(-1.0, 0.5, 0), 0.5,  material.Lambertian(vector.Vec3(.4, .2, .81)))
+    hit_list.append(sp1)
+    sp2 = hittable.Sphere(vector.Vec3(0.0, 0.5, 0), 0.5,  material.Lambertian(vector.Vec3(.4, .2, .81)))
+    hit_list.append(sp2)
+    sp3 = hittable.Sphere(vector.Vec3(1.0, 0.5, 0), 0.5,  material.Lambertian(vector.Vec3(.4, .2, .81)))
+    hit_list.append(sp3)
+    
+    # world.add(hittable.Sphere(vector.Vec3(1, 0, -1), 0.5, material.Metal(vector.Vec3(.8, .6, .2), 0.0)))
+    # 
+
+    bvh = hittable.bvh_node(hit_list,0,1)
+    world.add(bvh)
+
+    return world
+
+
 
 '''
 Writes pixel color to the output file
@@ -114,19 +156,19 @@ def entry(filename, instanceid):
     # image_width = 384
     image_width = 800
     image_height = int(image_width / aspect_ratio)
-    samples_per_pixel = 32
+    samples_per_pixel = 60
     max_depth = 50
 
-    lookfrom = vector.Vec3(13, 2, 3)
+    lookfrom = vector.Vec3(0, 2, -10)
     lookat = vector.Vec3(0, 0, 0)
     dist_to_focus = 10.0
     aperture = 0.1
 
     vup = vector.Vec3(0, 1, 0)
 
-    cam = camera.Camera(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus)
+    cam = camera.Camera(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus,0.0, 1.0)
 
-    world = random_scene(-1)
+    world = test_scene2(-1)
 
     random.seed(instanceid)
 
@@ -169,4 +211,5 @@ def entry(filename, instanceid):
 if __name__ == "__main__":
     # execute only if run as a script
 
-    entry()
+    # for debugging
+    entry("temp", 1)

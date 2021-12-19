@@ -1,6 +1,6 @@
 # Python implementation of Ray tracing in one weekend
 
-Python implementation of Peter Shirley's excellent book Ray Tracing In One Weekend. https://raytracing.github.io/books/RayTracingInOneWeekend.html
+Python implementation of Peter Shirley's excellent book Ray Tracing In One Weekend. https://raytracing.github.io/
 
 Tested to run ok with PyPy for significant speedup compared to CPython.
 

@@ -16,6 +16,8 @@ def random_double():
 def random_double_range(min_value: float, max_value: float):
     return random.uniform(min_value, max_value)
 
+def random_int(min_value: int, max_value: int):
+    return random.randint(min_value, max_value)
 
 def clamp(x: float, min_value: float, max_value: float):
 
