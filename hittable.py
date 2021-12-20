@@ -154,6 +154,13 @@ class bvh_node(Hittable):
         hit_left, left_hit_record = self.left.hit(ray, t_min, t_max)
         hit_right, right_hit_record = self.right.hit(ray, t_min, t_max)
 
+        # both report a hit, return the one that is closer
+        if hit_left and hit_right:
+            if left_hit_record.t < right_hit_record.t:
+                return hit_left, left_hit_record
+            else:
+                return hit_right, right_hit_record
+
         if hit_left:
             return hit_left, left_hit_record
         if hit_right:

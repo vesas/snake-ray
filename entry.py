@@ -90,11 +90,11 @@ def test_scene2(seed):
 
     world.add(hittable.Sphere(vector.Vec3(0, -1000, 0), 1000, material.Lambertian(vector.Vec3(0.6, 0.6, 0.6))))
     
-    sp1 = hittable.Sphere(vector.Vec3(-1.0, 0.5, 0), 0.5,  material.Lambertian(vector.Vec3(.4, .2, .81)))
+    sp1 = hittable.Sphere(vector.Vec3(-0.7, 0.5, 0), 0.5,  material.Lambertian(vector.Vec3(.4, .2, .81)))
     hit_list.append(sp1)
     sp2 = hittable.Sphere(vector.Vec3(0.0, 0.5, 0), 0.5,  material.Lambertian(vector.Vec3(.4, .2, .81)))
     hit_list.append(sp2)
-    sp3 = hittable.Sphere(vector.Vec3(1.0, 0.5, 0), 0.5,  material.Lambertian(vector.Vec3(.4, .2, .81)))
+    sp3 = hittable.Sphere(vector.Vec3(0.7, 0.5, 0), 0.5,  material.Lambertian(vector.Vec3(.4, .2, .81)))
     hit_list.append(sp3)
     
     # world.add(hittable.Sphere(vector.Vec3(1, 0, -1), 0.5, material.Metal(vector.Vec3(.8, .6, .2), 0.0)))
@@ -159,9 +159,9 @@ def entry(filename, instanceid):
     samples_per_pixel = 60
     max_depth = 50
 
-    lookfrom = vector.Vec3(0, 2, -10)
-    lookat = vector.Vec3(0, 0, 0)
-    dist_to_focus = 10.0
+    lookfrom = vector.Vec3(0, 1.5, -8)
+    lookat = vector.Vec3(0, 0.5, 0)
+    dist_to_focus = 8.0
     aperture = 0.1
 
     vup = vector.Vec3(0, 1, 0)
